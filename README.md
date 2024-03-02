@@ -14,6 +14,6 @@ AugmentPy is an open-source toolkit designed to enrich image datasets through ad
 Ensure you have Python 3.6+ installed, then clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/yourusername/AugmentPy.git
+git clone https://github.com/zamalali/AugmentPy.git
 cd AugmentPy
 pip install -r requirements.txt
