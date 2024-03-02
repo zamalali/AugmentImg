@@ -2,6 +2,12 @@
 
 AugmentPy is an open-source toolkit designed to enrich image datasets through advanced augmentation techniques, preserving the original size of the images. It is built with Python and provides a user-friendly GUI for ease of use, making it an ideal tool for data scientists and AI practitioners.
 
+## Application Interface
+
+### Here's a glimpse of the AugmentPy User Interface
+
+![AugmentPy UI](images/ui.png)
+
 ## Features
 
 - **Intuitive Graphical Interface**: Simplifies the augmentation process with a PyQt-based GUI.
