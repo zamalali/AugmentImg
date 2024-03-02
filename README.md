@@ -13,7 +13,7 @@ AugmentPy is an open-source toolkit designed to enrich image datasets through ad
 - **Intuitive Graphical Interface**: Simplifies the augmentation process with a PyQt-based GUI.
 - **Versatile Augmentations**: Includes a range of transformations such as flips, color jitters, rotations, and more.
 - **Preservation of Image Dimensions**: Augments images without altering their original dimensions.
-- **Supports Common Formats**: Works with popular image formats including PNG, JPEG, TIFF, BMP, and GIF.
+- **Supports Common Formats**: Works with popular image formats including PNG, JPEG, TIFF, BMP etc.
 
 ## Installation
 
