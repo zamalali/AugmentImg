@@ -14,6 +14,7 @@ def get_transform():
         transforms.RandomPerspective(distortion_scale=0.5, p=0.5),  # Random perspective transformation
         transforms.RandomGrayscale(p=0.1),  # Converts the image to grayscale with a probability of 0.1
         transforms.GaussianBlur(kernel_size=3, sigma=(0.1, 2.0)),  # Applies Gaussian blur
+        #Here you can add any amount of transformations you need from the Pytorch Documentation
     ])
     return transform
 
