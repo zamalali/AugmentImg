@@ -1,0 +1,25 @@
+# Set the default behavior, in case users don't have core.autocrlf set.
+* text=auto
+
+# Explicitly declare text files to prevent any CRLF conversion issues.
+*.py text eol=lf
+*.md text eol=lf
+*.rst text eol=lf
+*.txt text eol=lf
+
+# Mark binary files to avoid any text conversion.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+
+# Define custom merge strategy for specific files if needed.
+# *.properties merge=ours
+
+# Use LF for shell scripts to avoid issues on Unix-like systems.
+*.sh text eol=lf
+
+# Exclude files from archives created with `git archive`.
+/tests/ export-ignore
+/docs/ export-ignore
