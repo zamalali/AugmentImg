@@ -1,2 +1,19 @@
-# AugmentPy
-A Python-powered tool for enhancing image datasets with diverse augmentations, designed to boost machine learning models by expanding and diversifying training data without altering original image dimensions.
+# AugmentPy 📚
+
+AugmentPy is an open-source toolkit designed to enrich image datasets through advanced augmentation techniques, preserving the original size of the images. It is built with Python and provides a user-friendly GUI for ease of use, making it an ideal tool for data scientists and AI practitioners.
+
+## Features
+
+- **Intuitive Graphical Interface**: Simplifies the augmentation process with a PyQt-based GUI.
+- **Versatile Augmentations**: Includes a range of transformations such as flips, color jitters, rotations, and more.
+- **Preservation of Image Dimensions**: Augments images without altering their original dimensions.
+- **Supports Common Formats**: Works with popular image formats including PNG, JPEG, TIFF, BMP, and GIF.
+
+## Installation
+
+Ensure you have Python 3.6+ installed, then clone the repository and install dependencies:
+
+```bash
+git clone https://github.com/yourusername/AugmentPy.git
+cd AugmentPy
+pip install -r requirements.txt
