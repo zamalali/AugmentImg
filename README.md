@@ -4,7 +4,7 @@ AugmentPy is an open-source toolkit designed to enrich image datasets through ad
 
 ## Application Interface
 
-### Here's a glimpse of the AugmentPy User Interface
+### Here's how AugmentPy User Interface looks like
 
 ![AugmentPy UI](images/ui.png)
 
