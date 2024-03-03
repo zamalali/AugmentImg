@@ -1,4 +1,4 @@
-PIL==9.5.0
+pillow==9.5.0
 torch==2.2.1
 torchvision==0.17.1
 PyQt5==5.15.4
