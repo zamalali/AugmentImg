@@ -1,32 +1,54 @@
 from torchvision import transforms
 from PIL import Image
 import os
-import random
 
-def get_transform():
-    # Define a set of transformations for augmentation with less intense rotations
-    transform = transforms.Compose([
-        transforms.RandomHorizontalFlip(p=0.3),  # Flips the image horizontally with a probability of 0.5
-        transforms.RandomVerticalFlip(p=0.2),  # Flips the image vertically with a probability of 0.5
-        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.02),  # Slight color jitter
-        transforms.RandomRotation(degrees=(-30, 30)),  # Limits the rotation to +/- 30 degrees
-        transforms.RandomAffine(degrees=0, translate=(0.1, 0.1), shear=10),  # Affine transformation without rotation
-        transforms.RandomPerspective(distortion_scale=0.5, p=0.5),  # Random perspective transformation
-        transforms.RandomGrayscale(p=0.1),  # Converts the image to grayscale with a probability of 0.1
-        transforms.GaussianBlur(kernel_size=3, sigma=(0.1, 2.0)),  # Applies Gaussian blur
-        #Here you can add any amount of transformations you need from the Pytorch Documentation
-    ])
+def get_transform(selected_augmentations):
+    transformations = []
+    # Basic transformations
+    if selected_augmentations.get('rotation'):
+        transformations.append(transforms.RandomRotation(degrees=(0, 360)))
+    if selected_augmentations.get('flip'):
+        transformations.append(transforms.RandomHorizontalFlip())
+        transformations.append(transforms.RandomVerticalFlip())
+    if selected_augmentations.get('blur'):
+        transformations.append(transforms.GaussianBlur(5))
+    if selected_augmentations.get('saturation'):
+        transformations.append(transforms.ColorJitter(saturation=2))
+    
+    # Advanced transformations
+    if selected_augmentations.get('contrast'):
+        transformations.append(transforms.ColorJitter(contrast=2))
+    if selected_augmentations.get('sharpness'):
+        transformations.append(transforms.RandomAdjustSharpness(2))
+    if selected_augmentations.get('random_crop'):
+        transformations.append(transforms.RandomResizedCrop(224))
+    if selected_augmentations.get('random_erase'):
+        transformations.append(transforms.RandomErasing())
+    if selected_augmentations.get('affine'):
+        transformations.append(transforms.RandomAffine(degrees=(0, 360)))
+
+    # Additional transformations
+    if selected_augmentations.get('grayscale'):
+        transformations.append(transforms.RandomGrayscale())
+    if selected_augmentations.get('perspective'):
+        transformations.append(transforms.RandomPerspective())
+    if selected_augmentations.get('color_jitter'):
+        transformations.append(transforms.ColorJitter())
+    if selected_augmentations.get('equalize'):
+        transformations.append(transforms.RandomEqualize())
+    if selected_augmentations.get('invert'):
+        transformations.append(transforms.RandomInvert())
+
+    transform = transforms.Compose(transformations)
     return transform
 
 def augment_image(image_path, save_dir, transform, count):
     image = Image.open(image_path)
     augmented_image = transform(image)
-    
-    # Using the count to ensure unique file names
     save_path = os.path.join(save_dir, f'aug_{count}_{os.path.basename(image_path)}')
     augmented_image.save(save_path)
 
-def augment_images_in_folder(folder_path, total_desired_images):
+def augment_images_in_folder(folder_path, total_desired_images, selected_augmentations):
     original_images = [img for img in os.listdir(folder_path) if img.lower().endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif'))]
     num_original_images = len(original_images)
     if num_original_images == 0:
@@ -39,10 +61,9 @@ def augment_images_in_folder(folder_path, total_desired_images):
     save_dir = os.path.join(folder_path, 'augmented')
     os.makedirs(save_dir, exist_ok=True)
 
-    transform = get_transform()
+    transform = get_transform(selected_augmentations)
 
     for count in range(augmentations_needed):
-        # Cycle through original images for augmentation
         image_name = original_images[count % num_original_images]
         image_path = os.path.join(folder_path, image_name)
         augment_image(image_path, save_dir, transform, count)
