@@ -53,7 +53,7 @@ This checklist approach not only enhances the tool's usability by providing cont
 
 **Note**: The actual transformations applied may slightly vary depending on the specific settings and parameters chosen for each transformation type. You can still change them manually in augment.py file based on your requirements.
 
-**For further information, please refer to the [documentation](docs/docs.rst) and if you are facing any issues you can refer to the Possible [Img-not-supported](docs/errors.rst)**
+**For further information, please refer to the [documentation](docs/docs.rst) and if you are facing any issues you can refer to the possible [Img-not-supported](docs/errors.rst) error**
 
 
 ## Installation
