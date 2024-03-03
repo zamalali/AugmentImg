@@ -6,7 +6,7 @@ AugmentImg is an open-source toolkit designed to enrich image datasets through a
 
 ### Here's how AugmentImg User Interface looks like
 
-![AugmentImg UI](images/ui.png)
+![AugmentImg UI](images/ui_.png)
 
 ## Features
 
