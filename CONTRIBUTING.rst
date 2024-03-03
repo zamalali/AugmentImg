@@ -1,15 +1,15 @@
-Contributing to AugmentPy 📚
+Contributing to AugmentImg 📚
 =========================
 
-First off, thank you for considering contributing to AugmentPy! It's people like you that make AugmentPy such a great tool.
+First off, thank you for considering contributing to AugmentImg! It's people like you that make AugmentImg such a great tool.
 
 Following these guidelines helps to communicate that you respect the time of the developers managing and developing this open source project. In return, they should reciprocate that respect in addressing your issue, assessing changes, and helping you finalize your pull requests.
 
 Quick Links
 -----------
 
-- `Project Issues <https://github.com/zamalali/AugmentPy/issues>`_
-- `Pull Requests <https://github.com/zamalali/AugmentPy/pulls>`_
+- `Project Issues <https://github.com/zamalali/AugmentImg/issues>`_
+- `Pull Requests <https://github.com/zamalali/AugmentImg/pulls>`_
 
 Getting Started
 ---------------
@@ -33,7 +33,7 @@ Pull requests are the best way to propose changes to the codebase. We actively w
 Reporting Bugs
 --------------
 
-We use GitHub issues to track public bugs. Report a bug by `opening a new issue <https://github.com/zamalali/AugmentPy/issues/new>`_; it's that easy!
+We use GitHub issues to track public bugs. Report a bug by `opening a new issue <https://github.com/zamalali/AugmentImg/issues/new>`_; it's that easy!
 
 Write bug reports with detail, background, and sample code.
 
@@ -55,5 +55,5 @@ Feature requests are welcome. But take a moment to find out whether your idea fi
 License
 -------
 
-By contributing to AugmentPy, you agree that your contributions will be licensed under its MIT License.
+By contributing to AugmentImg, you agree that your contributions will be licensed under its MIT License.
 
