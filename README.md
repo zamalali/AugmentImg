@@ -1,12 +1,12 @@
-# AugmentPy 📚
+# AugmentImg 📚
 
-AugmentPy is an open-source toolkit designed to enrich image datasets through advanced augmentation techniques, preserving the original size of the images. It is built with Python and provides a user-friendly GUI for ease of use, making it an ideal tool for anyone who runs out of enough data.
+AugmentImg is an open-source toolkit designed to enrich image datasets through advanced augmentation techniques, preserving the original size of the images. It is built with Python and provides a user-friendly GUI for ease of use, making it an ideal tool for anyone who runs out of enough data.
 
 ## Application Interface
 
-### Here's how AugmentPy User Interface looks like
+### Here's how AugmentImg User Interface looks like
 
-![AugmentPy UI](images/ui.png)
+![AugmentImg UI](images/ui.png)
 
 ## Features
 
@@ -20,6 +20,6 @@ AugmentPy is an open-source toolkit designed to enrich image datasets through ad
 Ensure you have Python 3.6+ installed, then clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/zamalali/AugmentPy.git
-cd AugmentPy
+git clone https://github.com/zamalali/AugmentImg.git
+cd AugmentImg
 pip install -r requirements.txt
