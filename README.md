@@ -2,6 +2,8 @@
  
 AugmentImg is an open-source toolkit designed to enrich image datasets through advanced augmentation techniques, preserving the original size of the images. It is built with Python and provides a user-friendly GUI for ease of use, making it an ideal tool for anyone who runs out of enough data. 
 
+### You can also install this using pip as shown [here](https://pypi.org/project/augmentimg/)
+
 ## Application Interface
 
 ### Here's how AugmentImg User Interface looks like
