@@ -2,6 +2,12 @@
  
 AugmentImg is an open-source toolkit designed to enrich image datasets through advanced augmentation techniques, preserving the original size of the images. It is built with Pytorch and provides a user-friendly GUI for ease of use, making it an ideal tool for anyone who runs out of enough data. 
 
+
+[![PyPI](https://img.shields.io/pypi/v/augmentimg)](https://pypi.org/project/augmentimg/)
+[![Documentation Status](https://img.shields.io/badge/docs-github-blue)](https://github.com/zamalali/AugmentImg/tree/main/docs)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/augmentimg)
+
+
 ### You can also install this using [pip](https://pypi.org/project/augmentimg/)
 
 ## Application Interface
