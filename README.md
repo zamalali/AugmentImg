@@ -1,27 +1,30 @@
 # AugmentImg 📚
  
-AugmentImg is an open-source toolkit designed to enrich image datasets through advanced augmentation techniques, preserving the original size of the images. It is built with Pytorch and provides a user-friendly GUI for ease of use, making it an ideal tool for anyone who runs out of enough data. 
+AugmentImg is a user-friendly image augmentation tool for computer vision tasks. It offers a no-code graphical interface to apply various augmentations to images and their annotations. Simply input the desired count and select the types of augmentations. It supports both YOLO (txt) and COCO (json) annotation formats. 
 
 
 [![PyPI](https://img.shields.io/pypi/v/augmentimg)](https://pypi.org/project/augmentimg/)
-[![Documentation Status](https://img.shields.io/badge/docs-github-blue)](https://github.com/zamalali/AugmentImg/tree/main/docs)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/augmentimg)
+[![Language](https://img.shields.io/badge/lang-en-blue.svg)](#)
+[![Downloads](https://pepy.tech/badge/augmentimg)](https://pepy.tech/project/augmentimg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-
-### You can also install this using [pip](https://pypi.org/project/augmentimg/)
-
-## Application Interface
+### You can install this using [pip](https://pypi.org/project/augmentimg/)
 
 ### Here's how AugmentImg User Interface looks like
 
-![AugmentImg UI](images/ui_.png) 
+<div align="center">
+  <img src="https://raw.githubusercontent.com/zamalali/AugmentImg/main/images/demo.gif" alt="User Interface">
+</div>
+
 
 ## Features
 
-- **Intuitive Graphical Interface**: Simplifies the augmentation process with a PyQt-based GUI.
-- **Versatile Augmentations**: Includes a range of transformations such as flips, color jitters, rotations, and more.
-- **Preservation of Image Dimensions**: Augments images without altering their original dimensions.
-- **Supports Common Formats**: Works with popular image formats including PNG, JPEG, TIFF, BMP etc.
+- **Supports image augmentation with YOLO and COCO annotation formats.**
+- **Apply multiple augmentations like Rotation, Flip, Blur, Saturation, Contrast, Sharpness, Gamma correction, CLAHE, HSV adjustment, shift-scale-rotate, and Brightness.**
+- **Easy to use GUI.**
+- **Allows selection of the desired number of augmented images.**
+- **Options to augment images with or without annotations.**
+
 
 Checklist for Image Transformations
 ====================================
