@@ -1,7 +1,6 @@
-AugmentImg 📚
-=========
+**AugmentImg** 📚
 
-AugmentImg is an open-source, Python-based tool crafted to augment image datasets by applying a wide array of transformations. It aims to enrich machine learning datasets with varied data, enhancing model robustness without changing the original image sizes.
+AugmentImg is an open-source, Python-based tool crafted to augment image and annotation datasets by applying a wide array of transformations. It aims to enrich machine learning datasets with varied data, enhancing model robustness without changing the original image sizes.
 
 Features
 --------
@@ -42,7 +41,7 @@ Usage
 
 3. Input the desired total number of images in the designated field.
 
-4. Initiate the augmentation process by clicking on "Augment Images". Augmented images are saved in a subdirectory named `augmented` within the selected folder.
+4. Initiate the augmentation process by clicking on "Augment". Augmented images and annotations are saved in a subdirectory named `augmented` within the selected folder.
 
 Supported Image Formats
 -----------------------
@@ -53,6 +52,12 @@ AugmentImg works seamlessly with the following image extensions:
 - .jpg, .jpeg
 - .tiff
 - .bmp
+
+And the following annotation formats:
+
+- .txt (YOLO)
+- .json (COCO)
+
 
 Customizing Augmentations
 -------------------------
@@ -72,4 +77,4 @@ AugmentImg is made available under the MIT License. See the LICENSE file in the 
 Acknowledgments
 ---------------
 
-Our heartfelt thanks to the PyTorch and PyQt communities for their invaluable resources that have significantly contributed to the development of AugmentImg.
+Our heartfelt thanks to the PyTorch, Albumentations and PyQt communities for their invaluable resources that have significantly contributed to the development of AugmentImg.
