@@ -1,0 +1,255 @@
+import sys
+import os
+from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QComboBox, QFileDialog, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QCheckBox, QGridLayout, QMessageBox, QSpinBox
+from albumentations import Compose, RandomRotate90, BboxParams, Blur ,RandomBrightnessContrast, RandomGamma, Sharpen, HorizontalFlip, VerticalFlip, CLAHE, HueSaturationValue, ShiftScaleRotate, RandomBrightness
+import cv2
+import json
+
+def save_coco_json(coco_data, output_file_path):
+    with open(output_file_path, 'w') as f:
+        json.dump(coco_data, f, indent=4)
+
+def load_coco_json(file_path):
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+    return data
+
+def parse_coco_json(json_file):
+    try:
+        with open(json_file, 'r') as file:
+            data = json.load(file)
+    except json.JSONDecodeError as e:
+        print(f"Error decoding JSON: {e}")
+        return {}, {}, {}
+
+    if 'images' not in data or 'annotations' not in data or 'categories' not in data:
+        print("JSON file is missing one or more required keys ('images', 'annotations', 'categories')")
+        return {}, {}, {}
+
+    annotations = {item['id']: [] for item in data['images']}
+    for annotation in data['annotations']:
+        image_id = annotation['image_id']
+        annotations[image_id].append({
+            'bbox': annotation['bbox'],  # COCO bbox [x_min, y_min, width, height]
+            'category_id': annotation['category_id']
+        })
+    
+    images = {item['id']: item['file_name'] for item in data['images']}
+    classes = {category['id']: category['name'] for category in data['categories']}
+    return annotations, images, classes
+
+def augment_image_coco(image, image_id, annotations, classes, transform):
+    bboxes = [ann['bbox'] for ann in annotations[image_id]]
+    category_ids = [ann['category_id'] for ann in annotations[image_id]]
+
+    transformed = transform(image=image, bboxes=bboxes, category_ids=category_ids)
+    transformed_image = transformed['image']
+    transformed_bboxes = transformed['bboxes']
+    transformed_category_ids = transformed['category_ids']
+
+    return transformed_image, transformed_bboxes, transformed_category_ids
+
+def get_transform(selected_augmentations, annotation_format):
+    bbox_format = 'albumentations'
+    label_fields = []
+    if annotation_format == "YOLO":
+        bbox_format = 'yolo'
+        label_fields = ['category_ids']
+    elif annotation_format == "COCO":
+        bbox_format = 'coco'
+        label_fields = ['category_ids']
+
+    transformations = []
+    if selected_augmentations.get('rotate'):
+        transformations.append(RandomRotate90(p=1.0))
+    if selected_augmentations.get('flip_h'):
+        transformations.append(HorizontalFlip(p=0.5))
+    if selected_augmentations.get('flip_v'):
+        transformations.append(VerticalFlip(p=0.5))
+    if selected_augmentations.get('blur'):
+        transformations.append(Blur(p=0.5))
+    if selected_augmentations.get('brightness_contrast'):
+        transformations.append(RandomBrightnessContrast(p=0.5))
+    if selected_augmentations.get('sharpen'):
+        transformations.append(Sharpen(p=0.5))
+    if selected_augmentations.get('gamma'):
+        transformations.append(RandomGamma(p=0.5))
+    if selected_augmentations.get('clahe'):
+        transformations.append(CLAHE(p=0.5))
+    if selected_augmentations.get('hsv'):
+        transformations.append(HueSaturationValue(p=0.5))
+    if selected_augmentations.get('ssr'):
+        transformations.append(ShiftScaleRotate(p=0.5))
+    if selected_augmentations.get('brightness'):
+        transformations.append(RandomBrightnessContrast(brightness_limit=0.2, contrast_limit=0, p=0.5))
+
+    if label_fields:
+        return Compose(transformations, bbox_params=BboxParams(format=bbox_format, label_fields=label_fields))
+    else:
+        return Compose(transformations)
+
+def augment_image_and_annotation_yolo(image_path, annotation_path, save_dir, transform, count):
+    image = cv2.imread(image_path)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    with open(annotation_path, 'r') as file:
+        annotations = [line.strip().split() for line in file.readlines()]
+    bboxes = [(float(x[1]), float(x[2]), float(x[3]), float(x[4])) for x in annotations]
+    class_labels = [int(x[0]) for x in annotations]
+
+    transformed = transform(image=image, bboxes=bboxes, category_ids=class_labels)
+    transformed_image = transformed['image']
+    transformed_bboxes = transformed['bboxes']
+    transformed_class_labels = transformed['category_ids']
+
+    save_path = os.path.join(save_dir, f'aug_{count}_{os.path.basename(image_path)}')
+    transformed_image = cv2.cvtColor(transformed_image, cv2.COLOR_RGB2BGR)
+    cv2.imwrite(save_path, transformed_image)
+
+    annotation_save_path = os.path.join(save_dir, f'aug_{count}_{os.path.basename(annotation_path)}')
+    with open(annotation_save_path, 'w') as file:
+        for label, bbox in zip(transformed_class_labels, transformed_bboxes):
+            file.write(f"{label} {bbox[0]} {bbox[1]} {bbox[2]} {bbox[3]}\n")
+
+def augment_images_in_folder_yolo(folder_path, annotation_folder_path, total_desired_images, selected_augmentations):
+    original_images = [img for img in os.listdir(folder_path) if img.lower().endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif'))]
+    print("Number of images found:", len(original_images))
+    
+    if len(original_images) == 0:
+        raise Exception("No images found in the folder.")
+    
+    augmentations_needed = total_desired_images - len(original_images)
+    if augmentations_needed <= 0:
+        print("No additional images needed.")
+        return
+
+    save_dir = os.path.join(folder_path, 'augmented')
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir, exist_ok=True)
+
+    transform = get_transform(selected_augmentations, "YOLO")
+
+    count = 0
+    for i in range(augmentations_needed):
+        for image_name in original_images:
+            if count >= augmentations_needed:
+                break
+            image_path = os.path.join(folder_path, image_name)
+            annotation_path = os.path.join(annotation_folder_path, f"{os.path.splitext(image_name)[0]}.txt")
+            
+            
+            if not os.path.exists(annotation_path):
+                print(f"Annotation file does not exist for {image_path}")
+                continue
+
+            try:
+                augment_image_and_annotation_yolo(image_path, annotation_path, save_dir, transform, count)
+                count += 1
+            except Exception as e:
+                print(f"Unexpected error processing {image_name}: {str(e)}")
+                continue
+
+def augment_images_in_folder_coco(image_dir, json_path, total_desired_images, selected_augmentations):
+    coco_data = load_coco_json(json_path)
+    annotations, images, classes = parse_coco_json(json_path)
+    os.makedirs(os.path.join(image_dir, 'augmented'), exist_ok=True)
+    
+    augmented_images = []
+    augmented_annotations = []
+
+    transform = get_transform(selected_augmentations, "COCO")
+
+    count = 0
+    while count < total_desired_images:
+        for image_id, file_name in images.items():
+            if count >= total_desired_images:
+                break
+            image_path = os.path.join(image_dir, file_name)
+            if not os.path.exists(image_path):
+                print(f"Image {file_name} not found.")
+                continue
+            
+            image = cv2.imread(image_path)
+            if image is None:
+                print(f"Failed to load image {file_name}. Skipping.")
+                continue
+            
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+            try:
+                transformed_image, transformed_bboxes, transformed_category_ids = augment_image_coco(
+                    image, image_id, annotations, classes, transform
+                )
+
+                new_file_name = f"aug_{count}_{os.path.basename(file_name)}"
+                new_image_path = os.path.join(image_dir, 'augmented', new_file_name)
+                cv2.imwrite(new_image_path, cv2.cvtColor(transformed_image, cv2.COLOR_RGB2BGR))
+
+                augmented_images.append({
+                    "id": len(augmented_images),
+                    "file_name": new_file_name,
+                    "height": transformed_image.shape[0],
+                    "width": transformed_image.shape[1]
+                })
+
+                for bbox, category_id in zip(transformed_bboxes, transformed_category_ids):
+                    augmented_annotations.append({
+                        "image_id": len(augmented_images) - 1,
+                        "category_id": category_id,
+                        "bbox": bbox,  # Keep COCO format [x_min, y_min, width, height]
+                        "area": bbox[2] * bbox[3],
+                        "iscrowd": 0
+                    })
+                count += 1
+            except Exception as e:
+                print(f"Error processing image {file_name}: {e}")
+
+    # Save the augmented annotations to a new JSON file
+    coco_data['images'].extend(augmented_images)
+    coco_data['annotations'].extend(augmented_annotations)
+
+    augmented_coco_json_path = os.path.join(image_dir, 'augmented', 'augmented_annotations.json')
+    save_coco_json(coco_data, augmented_coco_json_path)
+
+    print("Augmentation complete. Check the 'augmented' folder.")
+
+def augment_images_only(folder_path, total_desired_images, selected_augmentations):
+    original_images = [img for img in os.listdir(folder_path) if img.lower().endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif'))]
+    print("Number of images found:", len(original_images))
+    
+    if len(original_images) == 0:
+        raise Exception("No images found in the folder.")
+    
+    augmentations_needed = total_desired_images - len(original_images)
+    if augmentations_needed <= 0:
+        print("No additional images needed.")
+        return
+
+    save_dir = os.path.join(folder_path, 'augmented')
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir, exist_ok=True)
+
+    transform = get_transform(selected_augmentations, "")
+
+    count = 0
+    for i in range(augmentations_needed):
+        for image_name in original_images:
+            if count >= augmentations_needed:
+                break
+            image_path = os.path.join(folder_path, image_name)
+            try:
+                image = cv2.imread(image_path)
+                if image is None:
+                    print(f"Failed to load image {image_name}. Skipping.")
+                    continue
+                image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+                transformed = transform(image=image)
+                transformed_image = transformed['image']
+
+                new_file_name = f"aug_{count}_{os.path.basename(image_name)}"
+                new_image_path = os.path.join(save_dir, new_file_name)
+                cv2.imwrite(new_image_path, cv2.cvtColor(transformed_image, cv2.COLOR_RGB2BGR))
+                count += 1
+            except Exception as e:
+                print(f"Unexpected error processing {image_name}: {str(e)}")
+                continue
