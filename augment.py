@@ -1,69 +1,164 @@
-from torchvision import transforms
-from PIL import Image
-import os
+class ImageAugmentationApp(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.selectedFolder = ''
+        self.annotationFolder = ''
+        self.initUI()
 
-def get_transform(selected_augmentations):
-    transformations = []
-    # Basic transformations
-    if selected_augmentations.get('rotation'):
-        transformations.append(transforms.RandomRotation(degrees=(0, 360)))
-    if selected_augmentations.get('flip'):
-        transformations.append(transforms.RandomHorizontalFlip())
-        transformations.append(transforms.RandomVerticalFlip())
-    if selected_augmentations.get('blur'):
-        transformations.append(transforms.GaussianBlur(5))
-    if selected_augmentations.get('saturation'):
-        transformations.append(transforms.ColorJitter(saturation=2))
-    
-    # Advanced transformations
-    if selected_augmentations.get('contrast'):
-        transformations.append(transforms.ColorJitter(contrast=2))
-    if selected_augmentations.get('sharpness'):
-        transformations.append(transforms.RandomAdjustSharpness(2))
-    if selected_augmentations.get('random_crop'):
-        transformations.append(transforms.RandomResizedCrop(224))
-    if selected_augmentations.get('random_erase'):
-        transformations.append(transforms.RandomErasing())
-    if selected_augmentations.get('affine'):
-        transformations.append(transforms.RandomAffine(degrees=(0, 360)))
+    def initUI(self):
+        self.setWindowTitle('Image Augmentation Tool')
+        self.setGeometry(100, 100, 800, 600)
+        mainLayout = QVBoxLayout()
 
-    # Additional transformations
-    if selected_augmentations.get('grayscale'):
-        transformations.append(transforms.RandomGrayscale())
-    if selected_augmentations.get('perspective'):
-        transformations.append(transforms.RandomPerspective())
-    if selected_augmentations.get('color_jitter'):
-        transformations.append(transforms.ColorJitter())
-    if selected_augmentations.get('equalize'):
-        transformations.append(transforms.RandomEqualize())
-    if selected_augmentations.get('invert'):
-        transformations.append(transforms.RandomInvert())
+        # Layout for selecting image directory
+        directoryLayout = QHBoxLayout()
+        self.btnSelectFolder = QPushButton('Select Image Folder', self)
+        self.btnSelectFolder.clicked.connect(self.openFolderDialog)
+        mainLayout.addWidget(self.btnSelectFolder)
 
-    transform = transforms.Compose(transformations)
-    return transform
+        # Checkbox for annotations
+        self.cbAnnotations = QCheckBox('Check this if you have annotations', self)
+        self.cbAnnotations.stateChanged.connect(self.annotationCheckboxChanged)
+        mainLayout.addWidget(self.cbAnnotations)
 
-def augment_image(image_path, save_dir, transform, count):
-    image = Image.open(image_path)
-    augmented_image = transform(image)
-    save_path = os.path.join(save_dir, f'aug_{count}_{os.path.basename(image_path)}')
-    augmented_image.save(save_path)
+        # Dropdown for annotation format
+        self.annotationFormatDropdown = QComboBox(self)
+        self.annotationFormatDropdown.addItem("YOLO (.txt)")
+        self.annotationFormatDropdown.addItem("COCO (.json)")
+        self.annotationFormatDropdown.setEnabled(False)
+        mainLayout.addWidget(self.annotationFormatDropdown)
 
-def augment_images_in_folder(folder_path, total_desired_images, selected_augmentations):
-    original_images = [img for img in os.listdir(folder_path) if img.lower().endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif'))]
-    num_original_images = len(original_images)
-    if num_original_images == 0:
-        raise Exception("No images found in the folder.")
+        # Layout for selecting annotation directory or file
+        annotationLayout = QHBoxLayout()
+        self.btnSelectAnnotationFolder = QPushButton('Select Annotations', self)
+        self.btnSelectAnnotationFolder.clicked.connect(self.openAnnotationFolderDialog)
+        self.btnSelectAnnotationFolder.setEnabled(False)
+        annotationLayout.addWidget(self.btnSelectAnnotationFolder)
+        mainLayout.addLayout(annotationLayout)
 
-    augmentations_needed = total_desired_images - num_original_images
-    if augmentations_needed <= 0:
-        raise Exception("The folder already contains the desired number of images or more.")
+        # Grid layout for checkboxes (augmentation types)
+        gridLayout = QGridLayout()
+        self.setupCheckBoxes(gridLayout)
+        mainLayout.addLayout(gridLayout)
 
-    save_dir = os.path.join(folder_path, 'augmented')
-    os.makedirs(save_dir, exist_ok=True)
+        # Spin box for total desired images
+        spinBoxLayout = QHBoxLayout()
+        self.labelDesiredImages = QLabel('Total Desired Images:', self)
+        self.spinBoxDesiredImages = QSpinBox(self)
+        self.spinBoxDesiredImages.setRange(1, 1000)
+        self.spinBoxDesiredImages.setValue(10)
+        spinBoxLayout.addWidget(self.labelDesiredImages)
+        spinBoxLayout.addWidget(self.spinBoxDesiredImages)
+        mainLayout.addLayout(spinBoxLayout)
 
-    transform = get_transform(selected_augmentations)
+        # Augment Images button
+        self.btnAugmentImages = QPushButton('Augment', self)
+        self.btnAugmentImages.clicked.connect(self.augmentImages)
+        mainLayout.addWidget(self.btnAugmentImages)
 
-    for count in range(augmentations_needed):
-        image_name = original_images[count % num_original_images]
-        image_path = os.path.join(folder_path, image_name)
-        augment_image(image_path, save_dir, transform, count)
+        container = QWidget()
+        container.setLayout(mainLayout)
+        self.setCentralWidget(container)
+
+    def setupCheckBoxes(self, gridLayout):
+        self.cbRotate = QCheckBox('Rotate 90', self)
+        self.cbFlipH = QCheckBox('Flip Horizontally', self)
+        self.cbFlipV = QCheckBox('Flip Vertically', self)
+        self.cbBlur = QCheckBox('Blur', self)
+        self.cbSaturation = QCheckBox('Saturation', self)
+        self.cbContrast = QCheckBox('Contrast', self)
+        self.cbSharpness = QCheckBox('Sharpness', self)
+        self.cbGamma = QCheckBox('Gamma', self)
+        self.cbCLAHE = QCheckBox('CLAHE', self)
+        self.cbHSV = QCheckBox('HSV', self)
+        self.cbSSR = QCheckBox('Shift, Scale, Rotate', self)
+        self.cbBrightness = QCheckBox('Brightness', self)
+
+        gridLayout.addWidget(self.cbRotate, 0, 0)
+        gridLayout.addWidget(self.cbFlipH, 0, 1)
+        gridLayout.addWidget(self.cbFlipV, 0, 2)
+        gridLayout.addWidget(self.cbBlur, 1, 0)
+        gridLayout.addWidget(self.cbSaturation, 1, 1)
+        gridLayout.addWidget(self.cbContrast, 1, 2)
+        gridLayout.addWidget(self.cbSharpness, 1, 3)
+        gridLayout.addWidget(self.cbGamma, 2, 0)
+        gridLayout.addWidget(self.cbCLAHE, 2, 1)
+        gridLayout.addWidget(self.cbHSV, 2, 2)
+        gridLayout.addWidget(self.cbSSR, 2, 3)
+        gridLayout.addWidget(self.cbBrightness, 0, 3)
+
+    def annotationCheckboxChanged(self):
+        if self.cbAnnotations.isChecked():
+            self.annotationFormatDropdown.setEnabled(True)
+            self.btnSelectAnnotationFolder.setEnabled(True)
+        else:
+            self.annotationFormatDropdown.setEnabled(False)
+            self.btnSelectAnnotationFolder.setEnabled(False)
+
+    def openFolderDialog(self):
+        self.selectedFolder = QFileDialog.getExistingDirectory(self, "Select Image Directory")
+        if not self.selectedFolder:
+            QMessageBox.warning(self, "Selection Error", "No directory selected")
+
+    def openAnnotationFolderDialog(self):
+        annotation_format = self.annotationFormatDropdown.currentText()
+        print(f"Selected annotation format: {annotation_format}")  # Debug print
+        if annotation_format == "COCO":
+            print("Expecting JSON file for COCO format")  # Debug print
+            self.annotationFolder, _ = QFileDialog.getOpenFileName(self, "Select COCO Annotation File", "", "JSON Files (*.json)")
+            if not self.annotationFolder:
+                QMessageBox.warning(self, "Selection Error", "No file selected")
+        else:
+            self.annotationFolder = QFileDialog.getExistingDirectory(self, "Select Annotation Directory")
+            if not self.annotationFolder:
+                QMessageBox.warning(self, "Selection Error", "No directory selected")
+
+    def augmentImages(self):
+        if not self.selectedFolder:
+            QMessageBox.critical(self, "Error", "Please select an image folder.")
+            return
+
+        selected_augmentations = {
+            'rotate': self.cbRotate.isChecked(),
+            'flip_h': self.cbFlipH.isChecked(),
+            'flip_v': self.cbFlipV.isChecked(),
+            'blur': self.cbBlur.isChecked(),
+            'saturation': self.cbSaturation.isChecked(),
+            'contrast': self.cbContrast.isChecked(),
+            'sharpness': self.cbSharpness.isChecked(),
+            'gamma': self.cbGamma.isChecked(),
+            'clahe': self.cbCLAHE.isChecked(),
+            'hsv': self.cbHSV.isChecked(),
+            'ssr': self.cbSSR.isChecked(),
+            'brightness': self.cbBrightness.isChecked()
+        }
+        total_desired_images = self.spinBoxDesiredImages.value()
+
+        try:
+            if self.cbAnnotations.isChecked():
+                if not self.annotationFolder:
+                    QMessageBox.critical(self, "Error", "Please select an annotation folder or file.")
+                    return
+
+                annotation_format = self.annotationFormatDropdown.currentText()
+                print(f"Annotation format in augmentImages: {annotation_format}")  # Debug print
+                if annotation_format == "COCO":
+                    augment_images_in_folder_coco(self.selectedFolder, self.annotationFolder, total_desired_images, selected_augmentations)
+                else:
+                    augment_images_in_folder_yolo(self.selectedFolder, self.annotationFolder, total_desired_images, selected_augmentations)
+            else:
+                augment_images_only(self.selectedFolder, total_desired_images, selected_augmentations)
+
+            QMessageBox.information(self, "Success", "Images have been augmented. Check the 'augmented' folder.")
+        except Exception as e:
+            QMessageBox.critical(self, "Error during augmentation", f"{str(e)}")
+            print(f"Error during augmentation: {str(e)}")
+
+def main():
+    app = QApplication(sys.argv)
+    ex = ImageAugmentationApp()
+    ex.show()
+    sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()
