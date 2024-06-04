@@ -12,7 +12,10 @@ AugmentImg is a user-friendly image augmentation tool for computer vision tasks.
 
 ### Here's how AugmentImg is used
 
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/c8gBNuI1x-8/0.jpg)](https://www.youtube.com/watch?v=c8gBNuI1x-8)
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/zamalali/AugmentImg/main/images/MyYoutube.gif" alt="User Interface">
+</div>
 
 ## Features
 
