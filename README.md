@@ -10,12 +10,9 @@ AugmentImg is a user-friendly image augmentation tool for computer vision tasks.
 
 ### You can install this using [pip](https://pypi.org/project/augmentimg/)
 
-### Here's how AugmentImg User Interface looks like
+### Here's how AugmentImg is used
 
-<div align="center">
-  <img src="https://raw.githubusercontent.com/zamalali/AugmentImg/main/images/demo.gif" alt="User Interface">
-</div>
-
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/c8gBNuI1x-8/0.jpg)](https://www.youtube.com/watch?v=c8gBNuI1x-8)
 
 ## Features
 
