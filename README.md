@@ -1,7 +1,7 @@
 # AugmentImg 📚
  
-AugmentImg is a user-friendly image augmentation tool for computer vision tasks. It offers a no-code graphical interface to apply various augmentations to images and their annotations. Simply input the desired count and select the types of augmentations. It supports both YOLO (txt) and COCO (json) annotation formats. 
-
+AugmentImg is a user-friendly image augmentation tool for computer vision tasks. It offers a no-code graphical interface to apply various augmentations to images and their annotations. Simply input the desired count and select the types of augmentations. It supports both YOLO (txt) and COCO (json) annotation formats. <br>
+Leave a star before you leave ⭐
 
 [![PyPI](https://img.shields.io/pypi/v/augmentimg)](https://pypi.org/project/augmentimg/)
 [![Language](https://img.shields.io/badge/lang-en-blue.svg)](#)
