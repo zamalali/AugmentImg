@@ -28,22 +28,22 @@ Pillow may have difficulties processing images in color modes other than RGB, su
 
 .. code-block:: python
 
-from PIL import Image, UnidentifiedImageError
+    from PIL import Image, UnidentifiedImageError
 
-def convert_image_to_rgb(image_path):
-    try:
-        with Image.open(image_path) as image:
-            if image.mode == 'CMYK':
-                image = image.convert('RGB')
-            return image
-    except (IOError, UnidentifiedImageError) as e:
-        print(f"Error: Cannot convert image at '{image_path}'. Reason: {e}")
+    def convert_image_to_rgb(image_path):
+        try:
+            with Image.open(image_path) as image:
+                if image.mode == 'CMYK':
+                    image = image.convert('RGB')
+                return image
+        except (IOError, UnidentifiedImageError) as e:
+            print(f"Error: Cannot convert image at '{image_path}'. Reason: {e}")
 
-# Usage example
-image_path = 'path/to/image.jpg'
-converted_image = convert_image_to_rgb(image_path)
-if converted_image:
-    converted_image.save('path/to/converted_image.jpg')
+    # Usage example
+    image_path = 'path/to/image.jpg'
+    converted_image = convert_image_to_rgb(image_path)
+    if converted_image:
+        converted_image.save('path/to/converted_image.jpg')
 
 
 Large Image Sizes
