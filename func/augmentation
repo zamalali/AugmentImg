@@ -6,23 +6,30 @@ import cv2
 import json
 
 def save_coco_json(coco_data, output_file_path):
-    with open(output_file_path, 'w') as f:
-        json.dump(coco_data, f, indent=4)
+    """Save COCO formatted data to a JSON file."""
+    try:
+        with open(output_file_path, 'w') as f:
+            json.dump(coco_data, f, indent=4)
+    except IOError as e:
+        print(f"Error saving JSON to {output_file_path}: {e}")
 
 def load_coco_json(file_path):
-    with open(file_path, 'r') as file:
-        data = json.load(file)
-    return data
+    """Load COCO formatted data from a JSON file."""
+    try:
+        with open(file_path, 'r') as file:
+            return json.load(file)
+    except (IOError, json.JSONDecodeError) as e:
+        print(f"Error loading JSON from {file_path}: {e}")
+        return None
 
 def parse_coco_json(json_file):
-    try:
-        with open(json_file, 'r') as file:
-            data = json.load(file)
-    except json.JSONDecodeError as e:
-        print(f"Error decoding JSON: {e}")
+    """Parse COCO JSON file and extract annotations, images, and classes."""
+    data = load_coco_json(json_file)
+    if not data:
         return {}, {}, {}
 
-    if 'images' not in data or 'annotations' not in data or 'categories' not in data:
+    required_keys = {'images', 'annotations', 'categories'}
+    if not required_keys.issubset(data):
         print("JSON file is missing one or more required keys ('images', 'annotations', 'categories')")
         return {}, {}, {}
 
@@ -33,9 +40,10 @@ def parse_coco_json(json_file):
             'bbox': annotation['bbox'],  # COCO bbox [x_min, y_min, width, height]
             'category_id': annotation['category_id']
         })
-    
+
     images = {item['id']: item['file_name'] for item in data['images']}
     classes = {category['id']: category['name'] for category in data['categories']}
+    
     return annotations, images, classes
 
 def augment_image_coco(image, image_id, annotations, classes, transform):
