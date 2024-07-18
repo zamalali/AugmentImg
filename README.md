@@ -29,7 +29,7 @@ Leave a star before you leave ⭐
 Checklist for Image Transformations
 ====================================
 
-In the Image Augmentation Tool, users have the flexibility to select specific image transformations they wish to apply to their images. This feature is implemented through a user-friendly checklist within the graphical user interface (GUI), enabling tailored augmentation processes according to user preferences.
+In the Image Augmentation Tool, users have the flexibility to select specific image transformations they wish to apply to their images. This feature is implemented through a user-friendly checklist within the graphical user interface (GUI), enabling tailored augmentation processes according to user preferences. 
 
 **Implementation Overview**:
 
@@ -69,9 +69,15 @@ This checklist approach not only enhances the tool's usability by providing cont
 
 ## Installation
 
+Otherwise run the following commands in your terminal
+```bash
+pip install augmentimg
+augment-img
+```
 Ensure you have Python 3.6+ installed, then clone the repository and install dependencies:
 
 ```bash
 git clone https://github.com/zamalali/AugmentImg.git
 cd AugmentImg
 pip install -r requirements.txt
+```
