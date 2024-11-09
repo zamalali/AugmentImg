@@ -5,7 +5,7 @@ Leave a star before you leave ⭐
 
 [![PyPI](https://img.shields.io/pypi/v/augmentimg)](https://pypi.org/project/augmentimg/)
 [![Language](https://img.shields.io/badge/lang-en-blue.svg)](#)
-[![Downloads](https://pepy.tech/badge/augmentimg)](https://pepy.tech/project/augmentimg)
+![PyPI Downloads](https://static.pepy.tech/badge/augmentimg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ### You can install this using [pip](https://pypi.org/project/augmentimg/)
