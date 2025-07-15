@@ -52,7 +52,7 @@ class ImageAugmentationApp(QMainWindow):
         spinBoxLayout = QHBoxLayout()
         self.labelDesiredImages = QLabel('Total Desired Images:', self)
         self.spinBoxDesiredImages = QSpinBox(self)
-        self.spinBoxDesiredImages.setRange(1, 1000)
+        self.spinBoxDesiredImages.setRange(1, 100000)
         self.spinBoxDesiredImages.setValue(10)
         spinBoxLayout.addWidget(self.labelDesiredImages)
         spinBoxLayout.addWidget(self.spinBoxDesiredImages)
